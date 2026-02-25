@@ -80,6 +80,26 @@ document.querySelectorAll('.stat-number[data-count]').forEach(counter => {
   counterObserver.observe(counter);
 });
 
+// ===== MOBILE ACCORDION =====
+document.querySelectorAll('.mobile-accordion-trigger').forEach(trigger => {
+  trigger.addEventListener('click', () => {
+    const content = trigger.nextElementSibling;
+    trigger.classList.toggle('open');
+    content.classList.toggle('open');
+  });
+});
+
+// Close mobile menu on accordion link click
+if (mobileMenu) {
+  mobileMenu.querySelectorAll('.mobile-accordion-content a').forEach(link => {
+    link.addEventListener('click', () => {
+      if (navToggle) navToggle.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+}
+
 // ===== CONTACT FORM =====
 const contactForm = document.querySelector('#contact-form');
 if (contactForm) {
