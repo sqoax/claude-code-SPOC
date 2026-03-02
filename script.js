@@ -80,6 +80,20 @@ document.querySelectorAll('.stat-number[data-count]').forEach(counter => {
   counterObserver.observe(counter);
 });
 
+// ===== CIRCLE OF SERVICES ANIMATION =====
+const cosWrapper = document.querySelector('.cos-wrapper');
+if (cosWrapper) {
+  const cosObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        cosObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  cosObserver.observe(cosWrapper);
+}
+
 // ===== MOBILE ACCORDION =====
 document.querySelectorAll('.mobile-accordion-trigger').forEach(trigger => {
   trigger.addEventListener('click', () => {
