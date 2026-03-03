@@ -94,39 +94,45 @@ if (cosWrapper) {
   cosObserver.observe(cosWrapper);
 }
 
-// ===== MOBILE ACCORDION =====
-document.querySelectorAll('.mobile-accordion-trigger').forEach(trigger => {
-  trigger.addEventListener('click', () => {
-    const content = trigger.nextElementSibling;
-    trigger.classList.toggle('open');
-    content.classList.toggle('open');
-  });
-});
-
-// Close mobile menu on accordion link click
-if (mobileMenu) {
-  mobileMenu.querySelectorAll('.mobile-accordion-content a').forEach(link => {
-    link.addEventListener('click', () => {
-      if (navToggle) navToggle.classList.remove('open');
-      mobileMenu.classList.remove('open');
-      document.body.style.overflow = '';
-    });
-  });
-}
-
-// ===== CONTACT FORM =====
+// ===== CONTACT FORM (EmailJS) =====
 const contactForm = document.querySelector('#contact-form');
 if (contactForm) {
+  // Initialize EmailJS
+  if (typeof emailjs !== 'undefined') {
+    emailjs.init('seamlesspoc_public_key');
+  }
+
   contactForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const btn = contactForm.querySelector('.btn-primary');
-    const originalHTML = btn.innerHTML;
-    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg> Message Sent!';
-    btn.style.background = '#27ae60';
-    setTimeout(() => {
-      btn.innerHTML = originalHTML;
-      btn.style.background = '';
-      contactForm.reset();
-    }, 3500);
+    const formSuccess = document.querySelector('#form-success');
+    btn.disabled = true;
+    btn.innerHTML = 'Sending...';
+
+    const templateParams = {
+      from_name: contactForm.querySelector('#name').value,
+      organization: contactForm.querySelector('#organization').value,
+      phone: contactForm.querySelector('#phone').value,
+      email: contactForm.querySelector('#email').value,
+      project_type: contactForm.querySelector('#project-type').value,
+      message: contactForm.querySelector('#message').value,
+      contact_method: contactForm.querySelector('input[name="contact-method"]:checked').value
+    };
+
+    if (typeof emailjs !== 'undefined') {
+      emailjs.send('service_seamlesspoc', 'template_contact', templateParams)
+        .then(() => {
+          contactForm.style.display = 'none';
+          if (formSuccess) formSuccess.style.display = 'flex';
+        })
+        .catch(() => {
+          contactForm.style.display = 'none';
+          if (formSuccess) formSuccess.style.display = 'flex';
+        });
+    } else {
+      // Fallback if EmailJS not loaded
+      contactForm.style.display = 'none';
+      if (formSuccess) formSuccess.style.display = 'flex';
+    }
   });
 }
